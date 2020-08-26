@@ -10,14 +10,15 @@ public class Server {
         try (ServerSocket server = new ServerSocket(9000);) {
             System.out.println("Start");
             while (true) {
-                try (ReadWr readWr = new ReadWr(server)) {
-                    String[] one =  readWr.readUserData();
-                    int Id = Gen.genId(one[0]);
-                    int Key = Gen.genKey();
-                    readWr.writeId(Id);
-                    readWr.writeKey(Key);
-                    System.out.println(Key);
+                try (ReadWr rW = new ReadWr(server)) {
+                    while (!server.isClosed()) {
 
+                        switch (rW.readLine()) {
+                            case "userRegData" :
+                                
+                                break;
+                        }
+                    }
                 } catch (NullPointerException e) {
                     e.printStackTrace();
                 }

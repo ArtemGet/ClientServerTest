@@ -6,9 +6,9 @@ import java.net.Socket;
 
 public class ReadWr implements Closeable {
     private final Socket socket;
-    public final BufferedReader reader;
+    private final BufferedReader reader;
     private final BufferedWriter writer;
-
+//Client constructor(its for my debugging and tests)
     public ReadWr(String ip, int port) {
         try {
             this.socket = new Socket(ip, port);
@@ -18,6 +18,7 @@ public class ReadWr implements Closeable {
             throw new RuntimeException(e);
         }
     }
+//Server constructor
     public ReadWr(ServerSocket server) {
         try {
             this.socket = server.accept();
@@ -28,14 +29,23 @@ public class ReadWr implements Closeable {
         }
     }
 
+//Here i create BReader(InputStream)
     private BufferedReader createReader() throws IOException {
         return new BufferedReader(new InputStreamReader(socket.getInputStream()));
     }
-
+//OutputStream
     private BufferedWriter createWriter() throws IOException {
         return new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
     }
 
+//Reading/writing a String line
+    public String readLine() {
+    try {
+        return reader.readLine();
+    } catch (IOException e) {
+        throw new RuntimeException(e);
+    }
+}
     public  void writeLine(String message) {
         try {
             writer.write(message);
@@ -45,14 +55,24 @@ public class ReadWr implements Closeable {
             throw new RuntimeException(e);
         }
     }
-    public String readLine() {
-         try {
-             return reader.readLine();
+//Reading/Writing an int value
+    public int read() {
+        try {
+            return reader.read();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    public void write(int value) {
+        try {
+            writer.write(value);
+            writer.flush();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
+//Writing userRegData as a consequence of three Strings
     public  void writeUserData(String userType, String FIO, String password) {
         try {
         writer.write(userType);
@@ -68,6 +88,7 @@ public class ReadWr implements Closeable {
             throw new RuntimeException(e);
         }
     }
+//Reading userRegData as a String[]
     public String[] readUserData()  {
         try {
              String[] userData = new String[]{reader.readLine(), reader.readLine(), reader.readLine()};
@@ -76,43 +97,16 @@ public class ReadWr implements Closeable {
             throw new RuntimeException(e);
         }
     }
-
-    public void writeId(int id) {
+//Reading Login, MetroStation and wheelChair invalid's commentary as a String[].
+    public String[] readHelp() {
         try {
-            writer.write(id);
-            //writer.newLine();
-            writer.flush();
+            String[] userData = new String[]{reader.readLine(), reader.readLine(), reader.readLine()};
+            return userData;
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
-    public int readId() {
-        try {
-            return reader.read();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public void writeKey(int key) {
-        try {
-            writer.write(key);
-            //writer.newLine();
-            writer.flush();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-    public int readKey() {
-        try {
-            return reader.read();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-
-    @Override
+    @Override //close all streams
     public void close() throws IOException {
         writer.close();
         reader.close();
