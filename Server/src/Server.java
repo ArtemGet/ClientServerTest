@@ -11,9 +11,12 @@ public class Server {
             System.out.println("Start");
             while (true) {
                 try (ReadWr readWr = new ReadWr(server)) {
-                    String request = readWr.readLine();
-                    String response = "HELLO FROM SERVER: " + request.length();
-                    readWr.writeLine(response);
+                    String[] one =  readWr.readUserData();
+                    int Id = Gen.genId(one[0]);
+                    int Key = Gen.genKey();
+                    readWr.writeId(Id);
+                    readWr.writeKey(Key);
+                    System.out.println(Key);
 
                 } catch (NullPointerException e) {
                     e.printStackTrace();

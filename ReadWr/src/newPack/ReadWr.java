@@ -52,6 +52,65 @@ public class ReadWr implements Closeable {
         }
     }
 
+    public  void writeUserData(String userType, String FIO, String password) {
+        try {
+        writer.write(userType);
+            writer.newLine();
+            writer.flush();
+        writer.write(FIO);
+            writer.newLine();
+            writer.flush();
+        writer.write(password);
+        writer.newLine();
+        writer.flush();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    public String[] readUserData()  {
+        try {
+             String[] userData = new String[]{reader.readLine(), reader.readLine(), reader.readLine()};
+        return userData;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void writeId(int id) {
+        try {
+            writer.write(id);
+            writer.newLine();
+            writer.flush();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    public int readId() {
+        try {
+            return reader.read();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void writeKey(int key) {
+        try {
+            writer.write(key);
+            writer.newLine();
+            writer.flush();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    public int readKey() {
+        try {
+            return reader.read();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
     @Override
     public void close() throws IOException {
         writer.close();
