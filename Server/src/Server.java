@@ -14,8 +14,14 @@ public class Server {
                     while (!server.isClosed()) {
 
                         switch (rW.readLine()) {
+
                             case "userRegData" :
+                                String[] userData = rW.readUserData();
+                                int Id = Gen.genId(userData[0]);
+                                int Key = Gen.genKey();
                                 
+                                rW.write(Id);
+                                rW.write(Key);
                                 break;
                         }
                     }
