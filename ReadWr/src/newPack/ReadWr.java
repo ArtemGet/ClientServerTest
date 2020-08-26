@@ -6,7 +6,7 @@ import java.net.Socket;
 
 public class ReadWr implements Closeable {
     private final Socket socket;
-    private final BufferedReader reader;
+    public final BufferedReader reader;
     private final BufferedWriter writer;
 
     public ReadWr(String ip, int port) {
@@ -31,6 +31,7 @@ public class ReadWr implements Closeable {
     private BufferedReader createReader() throws IOException {
         return new BufferedReader(new InputStreamReader(socket.getInputStream()));
     }
+
     private BufferedWriter createWriter() throws IOException {
         return new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
     }
@@ -79,7 +80,7 @@ public class ReadWr implements Closeable {
     public void writeId(int id) {
         try {
             writer.write(id);
-            writer.newLine();
+            //writer.newLine();
             writer.flush();
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -96,7 +97,7 @@ public class ReadWr implements Closeable {
     public void writeKey(int key) {
         try {
             writer.write(key);
-            writer.newLine();
+            //writer.newLine();
             writer.flush();
         } catch (IOException e) {
             throw new RuntimeException(e);

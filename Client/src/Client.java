@@ -10,8 +10,10 @@ public class Client {
         try (ReadWr readWr = new ReadWr("192.168.0.110",9000))
         {
            readWr.writeUserData("pregnant","Gay Gaivich Gayev","110");
+
             System.out.println(readWr.readId());
-            System.out.println(readWr.readKey());
+            int gay = readWr.readId();
+            System.out.println(gay);
         } catch (IOException e) {
             e.printStackTrace();
         }
