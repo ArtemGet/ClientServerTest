@@ -13,10 +13,9 @@ public class Client {
            rW.writeUserData("pregnant","Gay Gaivich Gayev","110");
 
           int Id = rW.read();
-          int Key = rW.read();
 
           System.out.println(Id);
-          System.out.println(Key);
+
         } catch (IOException e) {
             e.printStackTrace();
         }
