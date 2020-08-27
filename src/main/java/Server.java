@@ -13,28 +13,33 @@ public class Server {
                 try (RW rW = new RW(server)) {
                     int Id;
                     int Key;
+                    DBAccess a;
                     switch (rW.readLine()) {
 //Reacting to Android client registered button pressed
                         case "userRegData" :
-                            String[] userData = rW.readUserData();
-                            Id = Gen.genId(userData[0]);
+                            Object[] userData = rW.readUserData();
+                            Id = Gen.genId((String) userData[0]);
                             rW.write(Id);
-//here will be DB loading for the verification
+
+                            a = new DBAccess();
+                            a.setUserData((String) userData[0],(String)userData[1], (int)userData[2]);
+                           // rW.writeLine("Wait for 24 hours");
                             break;
 //Reacting to Verification client connected
                         case "adminId":
-//if we got unregistered Id in DB we push it to the Verif client and waiting for the t/f respond
+
                             break;
                         case "userId":
-                            Id = rW.read(); //and compare this id to the id in DB
-//if verification respond - t
-                            Key = Gen.genKey();
-                            rW.write(Key);
-//Attaching Key to the Id in DB
-//if verification respond - null
-                            rW.writeLine("wait for verification");
-//if verification respond - f
-                            rW.writeLine("registration failed");
+                            Id = rW.read();
+
+                             a = new DBAccess();
+                            int key = a.checkKey(Id);
+                            if (key != 0) {
+                                rW.write(key);
+                            }
+                            else {
+                                rW.close();
+                            }
                             break;
                         case "userHelpRequest":
                             String[] help = rW.readHelp();

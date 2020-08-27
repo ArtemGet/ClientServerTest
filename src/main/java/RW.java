@@ -70,12 +70,12 @@ public class RW implements Closeable {
     }
 
     //Writing userRegData as a consequence of three Strings
-    public  void writeUserData(String userType, String FIO, String password) {
+    public  void writeUserData(String userType, String name, int password) {
         try {
             writer.write(userType);
             writer.newLine();
             writer.flush();
-            writer.write(FIO);
+            writer.write(name);
             writer.newLine();
             writer.flush();
             writer.write(password);
@@ -86,9 +86,9 @@ public class RW implements Closeable {
         }
     }
     //Reading userRegData as a String[]
-    public String[] readUserData()  {
+    public Object[] readUserData()  {
         try {
-            String[] userData = new String[]{reader.readLine(), reader.readLine(), reader.readLine()};
+            Object[] userData = new Object[]{reader.readLine(),reader.readLine(), reader.read()};
             return userData;
         } catch (IOException e) {
             throw new RuntimeException(e);
