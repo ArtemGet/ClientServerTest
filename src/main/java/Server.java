@@ -15,32 +15,43 @@ public class Server {
                     int Key;
                     DBAccess a;
                     switch (rW.readLine()) {
-//Reacting to Android client registered button pressed
+//Registration Android Client
                         case "userRegData" :
-                            Object[] userData = rW.readUserData();
-                            Id = Gen.genId((String) userData[0]);
-                            rW.write(Id);
-
                             a = new DBAccess();
+                            Object[] userData = rW.readUserData();
+                            System.out.println("connected");
                             a.setUserData((String) userData[0],(String)userData[1], (int)userData[2]);
-                           // rW.writeLine("Wait for 24 hours");
+                            System.out.println(a.getId((String) userData[0],(String) userData[1],(int)userData[2]));
+                            //добавить инд ключ для id
+                            rW.write(a.getId((String) userData[0],(String) userData[1],(int)userData[2]));
                             break;
-//Reacting to Verification client connected
-                        case "adminId":
-
-                            break;
+//Adding key to Android Client after verification
                         case "userId":
+                            //заглушка
                             Id = rW.read();
+                            int key = Gen.genKey();
+                            a = new DBAccess();
+                            System.out.println(Id);
+                            System.out.println(key);
+                            a.insertKey(Id, key);
 
-                             a = new DBAccess();
+                            rW.write(key);
+                            /* a = new DBAccess();
                             int key = a.checkKey(Id);
                             if (key != 0) {
                                 rW.write(key);
                             }
                             else {
                                 rW.close();
-                            }
+                            } */
                             break;
+                        //Verify Android Client
+                        case "adminId":
+                            a = new DBAccess();
+                            rW.writeUnverified(a.getUnverifiedId(), a.getUnverifiedData());
+                            break;
+
+
                         case "userHelpRequest":
                             String[] help = rW.readHelp();
                             rW.writeLine("Help is incoming");
@@ -50,6 +61,7 @@ public class Server {
 //If we got help request in DB push it to the soc client
 //Will add logic later
                             break;
+//Raspberry asking for a key check
                         case "userKey":
                             Key = rW.read();
 //compare it to the key in DB

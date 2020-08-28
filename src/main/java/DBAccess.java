@@ -37,7 +37,8 @@ public class DBAccess implements Closeable {
         }
 
     }
-//server checks if key is attached to given Id  (when user trying to connect after reg it recognizes do we have that user verified)
+
+//for verification on pregnant clien
     public int checkKey(int userid) {
 
         int key = 0;
@@ -52,32 +53,71 @@ public class DBAccess implements Closeable {
             return 0;
         }
     }
-
-    public void setUserData(String type, String name, int pass) {
+    public void insertKey(int id, int key) {
         try {
-            statement.execute("INSERT INTO userdata ( type, name, pass) VALUES (" +"'"+ type + "'" + "," + "'" + name+ "'" + "," + pass + ");");
+            statement.executeUpdate("UPDATE userdata SET userkey=" + key + " where id=" + id);
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
-//needs to be rewrited and tested
-    public Object[][][] searchUnverif() {
-        Object[][][] userData = new Object[][][];
-        int id = 0;
-        String type = "";
-        String name = "";
-        try {
-            ResultSet rs = statement.executeQuery("SELECT id, type, name FROM userdata WHERE userkey= null");
-            while (rs.next()) {
-                for (Object a:userData) {
-                  a = rs.getInt("id");
 
-                }
-            }
-        } catch (SQLException e){
+//for registration on pregnant client
+    public void setUserData( String type, String name, int pass) {
+        try {
+            statement.execute("INSERT INTO userdata ( type, name, pass) VALUES (" + "'"+ type + "'" + "," + "'" + name+ "'" + "," + pass + ");");
+        } catch (SQLException e) {
             e.printStackTrace();
         }
-        return
+    }
+    public int getId(String type, String name, int pass) {
+        int id = 0;
+        try {
+           ResultSet rs = statement.executeQuery("SELECT id FROM userdata WHERE type =" + "'" + type + "' AND " + "name=" + "'" + name + "' AND " + "pass="  + pass );
+        while (rs.next()) {
+            id = rs.getInt("id");
+            return id;
+        }
+        } catch (SQLException e) {
+            //return 0;
+        }
+        return id;
+    }
+
+//for verification client (need to be tested)
+    public String[] getUnverifiedData() {
+        String[] userData = new String[] {};
+        try {
+            ResultSet rs = statement.executeQuery("SELECT  id, type, name FROM userdata WHERE userkey= null");
+            while (rs.next()) {
+                for (String a: userData) {
+                    a = rs.getString("type") + " " + rs.getString("name");
+                }
+                return userData;
+            }
+        } catch (SQLException e){
+            userData[0] = "";
+            return userData;
+        }
+        //?
+        userData[0] = "";
+        return userData;
+    }
+    public int[] getUnverifiedId() {
+        int[] id = new int[] {};
+        try {
+            ResultSet rs = statement.executeQuery("SELECT  id FROM userdata WHERE userkey= null");
+            while (rs.next()) {
+                for (int a: id) {
+                    a = rs.getInt("id");
+                }
+                return id;
+            }
+        } catch (SQLException e){
+            id[0] = 0;
+            return id;
+        }
+        id[0] = 0;
+        return id;
     }
 
 

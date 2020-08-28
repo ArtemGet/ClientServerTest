@@ -94,13 +94,34 @@ public class RW implements Closeable {
             throw new RuntimeException(e);
         }
     }
-    //Reading Login, MetroStation and wheelChair invalid's commentary as a String[].
+    //Reading Login, MetroStation and wheelChair invalid's commentary as a String[] (need to be tested)
     public String[] readHelp() {
         try {
             String[] userData = new String[]{reader.readLine(), reader.readLine(), reader.readLine()};
             return userData;
         } catch (IOException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    //parsing unverified ids and data(need to be tested)
+    public void writeUnverified(int[] id, String[] data) {
+        try {
+            if (id[0] != 0 || data[0] != "") {
+                for (int a : id
+                ) {
+                    writer.write(a);
+                    writer.flush();
+                }
+                for (String a:data
+                ) {
+                    writer.write(a);
+                    writer.newLine();
+                    writer.flush();
+                }
+            }
+
+        } catch (IOException e) {
         }
     }
     @Override //close all streams
