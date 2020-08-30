@@ -2,6 +2,7 @@
 
 import java.io.*;
 import java.net.ServerSocket;
+import java.util.ArrayList;
 
 
 public class Server {
@@ -12,7 +13,7 @@ public class Server {
             while (true) {
                 try (RW rW = new RW(server)) {
                     int Id;
-                    int Key;
+                    int key;
                     DBAccess a;
                     switch (rW.readLine()) {
 //Registration Android Client
@@ -29,7 +30,7 @@ public class Server {
                         case "userId":
                             //заглушка
                             Id = rW.read();
-                            int key = Gen.genKey();
+                             key = Gen.genKey();
                             a = new DBAccess();
                             System.out.println(Id);
                             System.out.println(key);
@@ -47,8 +48,24 @@ public class Server {
                             break;
                         //Verify Android Client
                         case "adminId":
+                            System.out.println("connected");
                             a = new DBAccess();
-                            rW.writeUnverified(a.getUnverifiedId(), a.getUnverifiedData());
+                            ArrayList<Integer> ID = a.getUnverifiedId();
+                            ArrayList<String> DATA =  a.getUnverifiedData();
+                            rW.writeUnverified(ID,DATA);
+
+                            ArrayList<Integer> verifiedId =  rW.readVerifiedId();
+                            //System.out.println(verifiedId.size());
+                            for (int b:verifiedId
+                                 ) {
+                                a.insertKey(b,Gen.genKey());
+                            }
+
+                            //while (rW.readLine() != "disconnect") {
+                            //    Id = rW.read();
+                            //    key =  Gen.genKey();
+                            //    a.insertKey(Id, key);
+                            //}
                             break;
 
 
@@ -63,7 +80,7 @@ public class Server {
                             break;
 //Raspberry asking for a key check
                         case "userKey":
-                            Key = rW.read();
+                            key = rW.read();
 //compare it to the key in DB
 //if true
                             rW.writeLine("On");

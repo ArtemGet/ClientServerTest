@@ -1,6 +1,7 @@
 import java.io.Closeable;
 import java.io.IOException;
 import java.sql.*;
+import java.util.ArrayList;
 
 public class DBAccess implements Closeable {
     private static final String URL = "jdbc:mysql://localhost:3306/mydbtest?useUnicode=true&useSSL=true&useJDBCCompliantTimezoneShift=true" +
@@ -84,40 +85,33 @@ public class DBAccess implements Closeable {
     }
 
 //for verification client (need to be tested)
-    public String[] getUnverifiedData() {
-        String[] userData = new String[] {};
+    public ArrayList<String> getUnverifiedData() {
+        ArrayList<String> userData = new ArrayList<>();
         try {
-            ResultSet rs = statement.executeQuery("SELECT  id, type, name FROM userdata WHERE userkey= null");
+            ResultSet rs = statement.executeQuery("SELECT type, name FROM userdata WHERE userkey=0" );
             while (rs.next()) {
-                for (String a: userData) {
-                    a = rs.getString("type") + " " + rs.getString("name");
-                }
-                return userData;
+                    userData.add( rs.getString("type") + " " + rs.getString("name"));
             }
+            return userData;
         } catch (SQLException e){
-            userData[0] = "";
+            userData.clear();
+            userData.add("");
             return userData;
         }
-        //?
-        userData[0] = "";
-        return userData;
     }
-    public int[] getUnverifiedId() {
-        int[] id = new int[] {};
+    public ArrayList<Integer> getUnverifiedId() {
+        ArrayList<Integer> id = new ArrayList<>();
         try {
-            ResultSet rs = statement.executeQuery("SELECT  id FROM userdata WHERE userkey= null");
-            while (rs.next()) {
-                for (int a: id) {
-                    a = rs.getInt("id");
-                }
-                return id;
+            ResultSet rs = statement.executeQuery("SELECT  id FROM userdata WHERE userkey=0 " );
+            while (rs.next() ) {
+                id.add(rs.getInt("id"));
             }
+            return id;
         } catch (SQLException e){
-            id[0] = 0;
+            id.clear();
+            id.set(0, 404);
             return id;
         }
-        id[0] = 0;
-        return id;
     }
 
 

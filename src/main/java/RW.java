@@ -2,6 +2,7 @@
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
 
 public class RW implements Closeable {
     private final Socket socket;
@@ -17,7 +18,7 @@ public class RW implements Closeable {
             throw new RuntimeException(e);
         }
     }
-    //Server constructor
+    
     public RW(ServerSocket server) throws IOException {
 
         this.socket = server.accept();
@@ -105,24 +106,64 @@ public class RW implements Closeable {
     }
 
     //parsing unverified ids and data(need to be tested)
-    public void writeUnverified(int[] id, String[] data) {
+    public void writeUnverified(ArrayList<Integer> id, ArrayList<String> data) {
         try {
-            if (id[0] != 0 || data[0] != "") {
+            writer.write(id.size());
+            writer.flush();
                 for (int a : id
                 ) {
                     writer.write(a);
                     writer.flush();
                 }
-                for (String a:data
+                writer.write(data.size());
+                writer.flush();
+                for (String b:data
                 ) {
-                    writer.write(a);
+                    writer.write(b);
                     writer.newLine();
                     writer.flush();
                 }
-            }
-
-        } catch (IOException e) {
+            } catch (IOException ioException) {
+            ioException.printStackTrace();
         }
+    }
+
+    public ArrayList<Integer> readUnverifiedId() throws IOException {
+        int num = reader.read();
+
+        ArrayList<Integer> id = new ArrayList<>(num);
+        for (int c = 0; c <num;c++) {
+            id.add(c,reader.read());
+        }
+        return id;
+    }
+    public ArrayList<String> readUnverifiedData() throws IOException {
+        int num = reader.read();
+        ArrayList<String> data = new ArrayList<>(num);
+        for (int c = 0; c <num;c++) {
+            data.add(c,reader.readLine());
+        }
+        return data;
+    }
+
+    public void writeVerifiedId( ArrayList<Integer> Id) throws IOException {
+        writer.write(Id.size());
+        writer.flush();
+        for (int a: Id
+        ) {
+            writer.write(a);
+            writer.flush();
+        }
+    }
+    public ArrayList<Integer> readVerifiedId() throws IOException {
+        int size = reader.read();
+        ArrayList<Integer> Id = new ArrayList<>(size);
+
+        for (int c = 0; c < size; c++) {
+            Id.add(reader.read());
+
+        }
+        return Id;
     }
     @Override //close all streams
     public void close() throws IOException {
