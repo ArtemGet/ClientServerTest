@@ -155,15 +155,28 @@ public class RW implements Closeable {
             writer.flush();
         }
     }
-    public ArrayList<Integer> readVerifiedId() throws IOException {
-        int size = reader.read();
-        ArrayList<Integer> Id = new ArrayList<>(size);
+    public ArrayList<Integer> readVerifiedId()  {
+        try {
+            int size = reader.read();
+            ArrayList<Integer> Id = new ArrayList<>(size);
 
-        for (int c = 0; c < size; c++) {
-            Id.add(reader.read());
+            for (int c = 0; c < size; c++) {
+                Id.add(reader.read());
 
+            }
+            return Id;
+        } catch (IOException e) {
+            disconnect();
+            System.out.println("disconnected");
+            return null;
         }
-        return Id;
+    }
+    public void disconnect() {
+        try {
+            socket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
     @Override //close all streams
     public void close() throws IOException {

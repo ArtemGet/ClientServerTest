@@ -28,23 +28,16 @@ public class Server {
                             break;
 //Adding key to Android Client after verification
                         case "userId":
-                            //заглушка
                             Id = rW.read();
-                             key = Gen.genKey();
-                            a = new DBAccess();
-                            System.out.println(Id);
-                            System.out.println(key);
-                            a.insertKey(Id, key);
-
-                            rW.write(key);
-                            /* a = new DBAccess();
-                            int key = a.checkKey(Id);
+                             a = new DBAccess();
+                             key = a.checkKey(Id);
                             if (key != 0) {
+                                key = Gen.genKey();
                                 rW.write(key);
                             }
                             else {
                                 rW.close();
-                            } */
+                            }
                             break;
                         //Verify Android Client
                         case "adminId":
@@ -53,19 +46,30 @@ public class Server {
                             ArrayList<Integer> ID = a.getUnverifiedId();
                             ArrayList<String> DATA =  a.getUnverifiedData();
                             rW.writeUnverified(ID,DATA);
+                            String respond = rW.readLine();
+                            System.out.println(respond);
 
-                            ArrayList<Integer> verifiedId =  rW.readVerifiedId();
-                            //System.out.println(verifiedId.size());
-                            for (int b:verifiedId
-                                 ) {
-                                a.insertKey(b,Gen.genKey());
+                            //respond = "disconnect";
+                            while( respond.equals("disconnect") != true) {
+                                if (respond.equals("takeId")) {
+                                    System.out.println("взял");
+                                    ArrayList<Integer> verifiedId = rW.readVerifiedId();
+                                    for (int b : verifiedId
+                                    ) {
+                                        a.insertKey(b, Gen.genKey());
+                                    }
+                                }
+                                else if (respond.equals("refresh")) {
+                                    System.out.println("рефрешнул");
+                                     ID = a.getUnverifiedId();
+                                     DATA =  a.getUnverifiedData();
+                                    rW.writeUnverified(ID,DATA);
+                                }
+                                respond = rW.readLine();
+
                             }
 
-                            //while (rW.readLine() != "disconnect") {
-                            //    Id = rW.read();
-                            //    key =  Gen.genKey();
-                            //    a.insertKey(Id, key);
-                            //}
+
                             break;
 
 
