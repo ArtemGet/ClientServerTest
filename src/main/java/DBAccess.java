@@ -40,7 +40,7 @@ public class DBAccess implements Closeable {
     }
 
 //for verification on pregnant clien
-    public int checkKey(int userid) {
+    public int getKey(int userid) {
 
         int key = 0;
 
@@ -63,9 +63,9 @@ public class DBAccess implements Closeable {
     }
 
 //for registration on pregnant client
-    public void setUserData( String type, String name, int pass) {
+    public void setUserData( String type, String name,String lastName, int pass, int key) {
         try {
-            statement.execute("INSERT INTO userdata ( type, name, pass) VALUES (" + "'"+ type + "'" + "," + "'" + name+ "'" + "," + pass + ");");
+            statement.execute("INSERT INTO userdata ( type, name,lastname , pass, userkey) VALUES (" + "'"+ type + "'" + "," + "'" + name+ "'" + "," + "'" + lastName+ "'" + "," + pass + ","  + key + ");");
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -73,7 +73,7 @@ public class DBAccess implements Closeable {
     public int getId(String type, String name, int pass) {
         int id = 0;
         try {
-           ResultSet rs = statement.executeQuery("SELECT id FROM userdata WHERE type =" + "'" + type + "' AND " + "name=" + "'" + name + "' AND " + "pass="  + pass );
+           ResultSet rs = statement.executeQuery("SELECT id FROM userdata WHERE type =" + "'" + type + "' AND " + "name=" + "'" + name + "' AND " + "pass="  + pass);
         while (rs.next()) {
             id = rs.getInt("id");
             return id;
@@ -83,6 +83,7 @@ public class DBAccess implements Closeable {
         }
         return id;
     }
+
 
 //for verification client (need to be tested)
     public ArrayList<String> getUnverifiedData() {
@@ -114,7 +115,33 @@ public class DBAccess implements Closeable {
         }
     }
 
+    public boolean checkPregnantPaper(int num, String name, String lastname) {
+        int number = 0;
+        try {
+            ResultSet rs = statement.executeQuery("SELECT number FROM paper WHERE number =" + "'" + num + "' AND " + "name=" + "'" + name + "' AND " + "lastname="  + "'" + lastname + "'" );
+        while (rs.next()) {
+            number = rs.getInt("number");
+        }
+        if (number == num) {
+            return true;
+        }
+        else {
+            return false;
+        }
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
 
+        return true;
+    }
+    public void setPregnantData(  String name,String lastName, int pass, int key) {
+        try {
+           String type = "pregnant";
+            statement.execute("INSERT INTO userdata ( type, name,lastname , pass, userkey) VALUES (" + "'"+ type + "'" + "," + "'" + name+ "'" + "," + "'" + lastName+ "'" + "," + pass + ","  + key + ");");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 
     @Override
     public void close() throws IOException {

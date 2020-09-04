@@ -15,26 +15,64 @@ public class Server {
                     RW rW = new RW(server);
                     new Thread(()->{
                         int Id;
-                        int key;
+                        int key = 0;
                         DBAccess a;
-                       String gay = rW.readLine();
+                        Object[] userData;
+                        String gay = rW.readLine();
                         switch (gay) {
 //Registration Android Client
                             case "userRegData" :
                                 a = new DBAccess();
-                                Object[] userData = rW.readUserData();
+                                 userData = rW.readUserData();
                                 System.out.println("connected");
-                                a.setUserData((String) userData[0],(String)userData[1], (int)userData[2]);
-                                System.out.println(a.getId((String) userData[0],(String) userData[1],(int)userData[2]));
-                                //добавить инд ключ для id
-                                rW.write(a.getId((String) userData[0],(String) userData[1],(int)userData[2]));
+                                key = Gen.genKey();
+                                //добавить проверку регистрации String type, String name, int pass, int key
 
+                                System.out.println((String)userData[0]);
+                                System.out.println((String)userData[1]);
+                                System.out.println((int)userData[3]);
+
+                                if (a.getId((String)userData[0], (String)userData[1], (int)userData[3]) == 0) {
+                                    a.setUserData((String) userData[0], (String) userData[1], (String) userData[2], (int) userData[3], key);
+                                    //System.out.println(a.getId((String) userData[0],(String) userData[1],(int)userData[2]));
+                                    Id = a.getId((String) userData[0], (String) userData[1], (int) userData[3]);
+                                    System.out.println(Id);
+                                    key = Gen.genKey();
+
+                                    rW.write(Id);
+                                    rW.write(key);
+                                }
+                                else {
+                                    rW.write(0);
+                                    rW.write(0);
+                                }
+                                break;
+                            case "loginPregnant":
+                                System.out.println("connected");
+                                a = new DBAccess();
+                                userData = rW.readPregnantData();
+                                boolean check = a.checkPregnantPaper((int)userData[0],(String) userData[1], (String) userData[2]);
+                                if(check && (a.getId("pregnant", (String)userData[1], (int)userData[3]) == 0)) {
+                                    key = Gen.genKey();
+                                    a.setPregnantData((String)userData[1], (String)userData[2],(int) userData[3], key );
+                                    Id = a.getId("pregnant",(String) userData[1],(int)userData[3]);
+                                    key = Gen.genKey();
+
+                                    System.out.println(Id);
+                                    System.out.println(key);
+                                    rW.write(Id);
+                                    rW.write(key);
+                                }
+                                else {
+                                    rW.write(0);
+                                    rW.write(0);
+                                }
                                 break;
 //Adding key to Android Client after verification
-                            case "userId":
+                           /* case "userId":
                                 Id = rW.read();
                                 a = new DBAccess();
-                                key = a.checkKey(Id);
+                                key = a.getKey(Id);
                                 if (key != 0) {
 
                                     rW.write(key);
@@ -46,9 +84,9 @@ public class Server {
                                         e.printStackTrace();
                                     }
                                 }
-                                break;
+                                break; */
                             //Verify Android Client
-                            case "adminId":
+                            /*case "adminId":
                                 System.out.println("connected");
                                 a = new DBAccess();
                                 ArrayList<Integer> ID = a.getUnverifiedId();
@@ -76,11 +114,7 @@ public class Server {
                                     respond = rW.readLine();
 
                                 }
-
-
-                                break;
-
-
+                                break;*/
                             case "userHelpRequest":
                                 String[] help = rW.readHelp();
                                 rW.writeLine("Help is incoming");
@@ -92,12 +126,15 @@ public class Server {
                                 break;
 //Raspberry asking for a key check
                             case "userKey":
-                                key = rW.read();
-//compare it to the key in DB
-//if true
-                                rW.writeLine("On");
-//If false
-                                rW.writeLine("Off");
+                                a = new DBAccess();
+                                Id = rW.read();
+                                key = a.getKey(Id);
+                                if (key != 0) {
+                                    rW.writeLine("On");
+                                }
+                                else if (key == 0) {
+                                    rW.writeLine("Off");
+                                }
                                 break;
 
                         }
