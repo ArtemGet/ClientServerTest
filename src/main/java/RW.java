@@ -71,7 +71,7 @@ public class RW implements Closeable {
     }
 
     //Writing userRegData as a consequence of three Strings
-    public  void writeUserData(String userType, String name,String lastName, int password) {
+    public  void writeUserData( String userType, String name, String lastName, String login, int password, int i) {
         try {
             writer.write(userType);
             writer.newLine();
@@ -80,6 +80,9 @@ public class RW implements Closeable {
             writer.newLine();
             writer.flush();
             writer.write(lastName);
+            writer.newLine();
+            writer.flush();
+            writer.write(login);
             writer.newLine();
             writer.flush();
             writer.write(password);
@@ -92,7 +95,7 @@ public class RW implements Closeable {
     //Reading userRegData as a String[]
     public Object[] readUserData()  {
         try {
-            Object[] userData = new Object[]{reader.readLine(),reader.readLine(),reader.readLine(), reader.read()};
+            Object[] userData = new Object[]{reader.readLine(),reader.readLine(),reader.readLine(),reader.read(), reader.read()};
             return userData;
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -106,7 +109,7 @@ public class RW implements Closeable {
             throw new RuntimeException(e);
         }
     }
-    public  void writePregnantData(int number, String name,String lastName, int password) {
+    public  void writePregnantData(int number, String name,String lastName, String login, int password) {
         try {
             writer.write(number);
             writer.newLine();
@@ -115,6 +118,9 @@ public class RW implements Closeable {
             writer.newLine();
             writer.flush();
             writer.write(lastName);
+            writer.newLine();
+            writer.flush();
+            writer.write(login);
             writer.newLine();
             writer.flush();
             writer.write(password);

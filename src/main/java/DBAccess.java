@@ -1,3 +1,5 @@
+import com.sun.org.apache.bcel.internal.generic.Select;
+
 import java.io.Closeable;
 import java.io.IOException;
 import java.sql.*;
@@ -63,9 +65,11 @@ public class DBAccess implements Closeable {
     }
 
 //for registration on pregnant client
-    public void setUserData( String type, String name,String lastName, int pass, int key) {
+    public void setUserData( String type, String name,String lastName,String login, int pass, int key) {
         try {
-            statement.execute("INSERT INTO userdata ( type, name,lastname , pass, userkey) VALUES (" + "'"+ type + "'" + "," + "'" + name+ "'" + "," + "'" + lastName+ "'" + "," + pass + ","  + key + ");");
+            statement.execute("INSERT INTO userdata ( type, name,lastname ,login, pass, userkey) VALUES (" +
+                    "" + "'"+ type + "'" + "," + "'" + name+ "'" + "," + "'" + lastName+ "'" + "," +
+                    "'" + login + "'" + "," + pass + ","  + key + ");");
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -140,6 +144,19 @@ public class DBAccess implements Closeable {
             statement.execute("INSERT INTO userdata ( type, name,lastname , pass, userkey) VALUES (" + "'"+ type + "'" + "," + "'" + name+ "'" + "," + "'" + lastName+ "'" + "," + pass + ","  + key + ");");
         } catch (SQLException e) {
             e.printStackTrace();
+        }
+    }
+
+    public Object[] getUserData(int id, int key) {
+
+        try {
+            ResultSet rs = statement.executeQuery("SELECT id,type ,name,lastname, login, pass, userkey FROM userdata WHERE id =" + id +" AND " + "userkey= " + key );
+            Object[] data = new Object[]{rs.getInt("id"),rs.getString("type"),rs.getString("name"),
+           rs.getString("lastname"),rs.getString("login"), rs.getInt("pass"), rs.getInt("userkey")};
+            return data;
+        } catch (SQLException throwables) {
+            Object[] data = new Object[]{0, null, null, null, null, 0, 0};
+            return data;
         }
     }
 

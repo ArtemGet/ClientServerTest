@@ -30,10 +30,10 @@ public class Server {
 
                                 System.out.println((String)userData[0]);
                                 System.out.println((String)userData[1]);
-                                System.out.println((int)userData[3]);
+                                System.out.println((int)userData[4]);
 
-                                if (a.getId((String)userData[0], (String)userData[1], (int)userData[3]) == 0) {
-                                    a.setUserData((String) userData[0], (String) userData[1], (String) userData[2], (int) userData[3], key);
+                                if (a.getId((String)userData[0], (String)userData[1], (int)userData[5]) == 0) {
+                                    a.setUserData((String) userData[0], (String) userData[1], (String) userData[2],(String) userData[3], (int) userData[4], key);
                                     //System.out.println(a.getId((String) userData[0],(String) userData[1],(int)userData[2]));
                                     Id = a.getId((String) userData[0], (String) userData[1], (int) userData[3]);
                                     System.out.println(Id);
@@ -67,6 +67,15 @@ public class Server {
                                     rW.write(0);
                                     rW.write(0);
                                 }
+                                break;
+                            case "login":
+                                a = new DBAccess();
+                                Id = rW.read();
+                                key = rW.read();
+                                Object[] Userdata = a.getUserData(Id,key);
+                                    rW.write((int)Userdata[0]);
+                                    rW.writeUserData((String)Userdata[1],(String)Userdata[2],(String)Userdata[3],
+                                    (String)Userdata[4],(int)Userdata[5],(int)Userdata[6]);
                                 break;
 //Adding key to Android Client after verification
                            /* case "userId":
