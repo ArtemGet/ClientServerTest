@@ -14,11 +14,14 @@ public class Server {
 
                     RW rW = new RW(server);
                     new Thread(()->{
+                        //System.out.println("connected");
+                        String gay = rW.readLine();
                         int Id;
                         int key = 0;
                         DBAccess a;
                         Object[] userData;
-                        String gay = rW.readLine();
+
+                        System.out.println(gay);
                         switch (gay) {
 //Registration Android Client
                             case "userRegData" :
@@ -26,16 +29,13 @@ public class Server {
                                  userData = rW.readUserData();
                                 System.out.println("connected");
                                 key = Gen.genKey();
-                                //добавить проверку регистрации String type, String name, int pass, int key
 
-                                System.out.println((String)userData[0]);
-                                System.out.println((String)userData[1]);
-                                System.out.println((int)userData[4]);
 
-                                if (a.getId((String)userData[0], (String)userData[1], (int)userData[5]) == 0) {
+
+                                if (a.getId((String)userData[0], (String)userData[1], (int)userData[4]) == 0) {
                                     a.setUserData((String) userData[0], (String) userData[1], (String) userData[2],(String) userData[3], (int) userData[4], key);
                                     //System.out.println(a.getId((String) userData[0],(String) userData[1],(int)userData[2]));
-                                    Id = a.getId((String) userData[0], (String) userData[1], (int) userData[3]);
+                                    Id = a.getId((String) userData[0], (String) userData[1], (int) userData[4]);
                                     System.out.println(Id);
                                     key = Gen.genKey();
 
@@ -52,11 +52,11 @@ public class Server {
                                 a = new DBAccess();
                                 userData = rW.readPregnantData();
                                 boolean check = a.checkPregnantPaper((int)userData[0],(String) userData[1], (String) userData[2]);
-                                if(check && (a.getId("pregnant", (String)userData[1], (int)userData[3]) == 0)) {
+                                if(check && (a.getId("pregnant", (String)userData[1], (int)userData[4]) == 0)) {
                                     key = Gen.genKey();
-                                    a.setPregnantData((String)userData[1], (String)userData[2],(int) userData[3], key );
-                                    Id = a.getId("pregnant",(String) userData[1],(int)userData[3]);
-                                    key = Gen.genKey();
+                                    a.setPregnantData((String)userData[1], (String)userData[2],(String)userData[3],(int) userData[4], key );
+                                    Id = a.getId("pregnant",(String) userData[1],(int)userData[4]);
+
 
                                     System.out.println(Id);
                                     System.out.println(key);
@@ -70,9 +70,9 @@ public class Server {
                                 break;
                             case "login":
                                 a = new DBAccess();
-                                Id = rW.read();
-                                key = rW.read();
-                                Object[] Userdata = a.getUserData(Id,key);
+                                String login = rW.readLine();
+                                int pass = rW.read();
+                                Object[] Userdata = a.getUserData(login,pass);
                                     rW.write((int)Userdata[0]);
                                     rW.writeUserData((String)Userdata[1],(String)Userdata[2],(String)Userdata[3],
                                     (String)Userdata[4],(int)Userdata[5],(int)Userdata[6]);
@@ -157,6 +157,7 @@ public class Server {
 
         catch (IOException e) {
             throw new RuntimeException(e);
+
         }
 
 

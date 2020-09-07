@@ -1,4 +1,4 @@
-import com.sun.org.apache.bcel.internal.generic.Select;
+
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -138,24 +138,28 @@ public class DBAccess implements Closeable {
 
         return true;
     }
-    public void setPregnantData(  String name,String lastName, int pass, int key) {
+    public void setPregnantData(  String name,String lastName,String login , int pass, int key) {
         try {
            String type = "pregnant";
-            statement.execute("INSERT INTO userdata ( type, name,lastname , pass, userkey) VALUES (" + "'"+ type + "'" + "," + "'" + name+ "'" + "," + "'" + lastName+ "'" + "," + pass + ","  + key + ");");
+            statement.execute("INSERT INTO userdata ( type, name,lastname ,login, pass, userkey) VALUES (" + "'"+ type + "'" + "," + "'" + name+ "'" + "," + "'" + lastName+ "'" + "," + "'" + login+ "'" + "," + pass + ","  + key + ");");
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-    public Object[] getUserData(int id, int key) {
-
+    public Object[] getUserData(String login, int pass) {
+        Object[] data = new Object[]{0, "null", "null", "null", "null", 0, 0};
         try {
-            ResultSet rs = statement.executeQuery("SELECT id,type ,name,lastname, login, pass, userkey FROM userdata WHERE id =" + id +" AND " + "userkey= " + key );
-            Object[] data = new Object[]{rs.getInt("id"),rs.getString("type"),rs.getString("name"),
-           rs.getString("lastname"),rs.getString("login"), rs.getInt("pass"), rs.getInt("userkey")};
+            ResultSet rs = statement.executeQuery("SELECT id,type ,name,lastname, login, pass, userkey FROM userdata WHERE login =" + "'" + login + "'" +" AND " + "pass="  + pass  );
+            while(rs.next()) {
+                data = new Object[]{rs.getInt("id"), rs.getString("type"), rs.getString("name"),
+                        rs.getString("lastname"), rs.getString("login"), rs.getInt("pass"), rs.getInt("userkey")};
+            }
+            System.out.println("1");
             return data;
-        } catch (SQLException throwables) {
-            Object[] data = new Object[]{0, null, null, null, null, 0, 0};
+        } catch (SQLException throwable) {
+
+            System.out.println("2");
             return data;
         }
     }
