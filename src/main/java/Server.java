@@ -1,5 +1,6 @@
 
 
+import javax.mail.MessagingException;
 import java.io.*;
 import java.net.ServerSocket;
 import java.util.ArrayList;
@@ -14,47 +15,57 @@ public class Server {
 
                     RW rW = new RW(server);
                     new Thread(()->{
-                        //System.out.println("connected");
                         String gay = rW.readLine();
                         int Id;
                         int key = 0;
+                        String login;
+                        int pass;
                         DBAccess a;
                         Object[] userData;
 
                         System.out.println(gay);
                         switch (gay) {
-//Registration Android Client
+                            //Registration Android Client
                             case "userRegData" :
                                 a = new DBAccess();
                                  userData = rW.readUserData();
                                 System.out.println("connected");
                                 key = Gen.genKey();
-
-
-
                                 if (a.getId((String)userData[0], (String)userData[1], (int)userData[4]) == 0) {
-                                    a.setUserData((String) userData[0], (String) userData[1], (String) userData[2],(String) userData[3], (int) userData[4], key);
-                                    //System.out.println(a.getId((String) userData[0],(String) userData[1],(int)userData[2]));
-                                    Id = a.getId((String) userData[0], (String) userData[1], (int) userData[4]);
-                                    System.out.println(Id);
-                                    key = Gen.genKey();
+                                    int keyCheck = 0;
+                                    try {
+                                        MailSender.sendMail((String)userData[5], key);
 
-                                    rW.write(Id);
-                                    rW.write(key);
+                                    } catch (MessagingException e) {
+                                    }
+                                    while (keyCheck != key)
+                                        keyCheck = rW.read();
+                                    if (keyCheck == key) {
+                                        a.setUserData((String) userData[0], (String) userData[1], (String) userData[2],(String) userData[3], (int) userData[4], key, (String)userData[5]);
+                                        Id = a.getId((String) userData[0], (String) userData[1], (int) userData[4]);
+                                        System.out.println(Id);
+                                        rW.write(Id);
+                                        rW.write(key);
+                                    }
+                                    else {
+                                        //wrong key
+                                        rW.write(1);
+                                        rW.write(1);
+                                    }
                                 }
                                 else {
                                     rW.write(0);
                                     rW.write(0);
                                 }
                                 break;
-                            case "loginPregnant":
+                            case "RegPregnant":
                                 System.out.println("connected");
                                 a = new DBAccess();
                                 userData = rW.readPregnantData();
                                 boolean check = a.checkPregnantPaper((int)userData[0],(String) userData[1], (String) userData[2]);
                                 if(check && (a.getId("pregnant", (String)userData[1], (int)userData[4]) == 0)) {
                                     key = Gen.genKey();
-                                    a.setPregnantData((String)userData[1], (String)userData[2],(String)userData[3],(int) userData[4], key );
+                                    a.setPregnantData((String)userData[1], (String)userData[2],(String)userData[3],(int) userData[4], key, (String)userData[5]);
                                     Id = a.getId("pregnant",(String) userData[1],(int)userData[4]);
 
 
@@ -68,16 +79,39 @@ public class Server {
                                     rW.write(0);
                                 }
                                 break;
+                            case "verify":
+
+                                break;
                             case "login":
                                 a = new DBAccess();
-                                String login = rW.readLine();
-                                int pass = rW.read();
+                                login = rW.readLine();
+                                 pass = rW.read();
                                 Object[] Userdata = a.getUserData(login,pass);
                                     rW.write((int)Userdata[0]);
                                     rW.writeUserData((String)Userdata[1],(String)Userdata[2],(String)Userdata[3],
-                                    (String)Userdata[4],(int)Userdata[5],(int)Userdata[6]);
+                                    (String)Userdata[4],(int)Userdata[5],(String) Userdata[6], (int)Userdata[7]);
                                 break;
-//Adding key to Android Client after verification
+                            case "passRecover":
+                                a = new DBAccess();
+                                 login = rW.readLine();
+                                 String email = rW.readLine();
+                                 pass = a.passRecover(login,email);
+
+                                 if(pass != 0) {
+                                     try {
+                                         MailSender.sendMail(email,"PasswordRecovery",String.valueOf(pass));
+                                     } catch (MessagingException e) {
+                                         e.printStackTrace();
+                                     }
+                                 }
+                                break;
+                            case "passChange":
+                                a = new DBAccess();
+                                Id = rW.read();
+                               pass = rW.read();
+                               rW.write(a.resetPass(Id,pass));
+                                break;
+                            //Adding key to Android Client after verification
                            /* case "userId":
                                 Id = rW.read();
                                 a = new DBAccess();
@@ -127,13 +161,13 @@ public class Server {
                             case "userHelpRequest":
                                 String[] help = rW.readHelp();
                                 rW.writeLine("Help is incoming");
-//Attaching help[] request to the id the DB
+                            //Attaching help[] request to the id the DB
                                 break;
                             case  "socId":
-//If we got help request in DB push it to the soc client
-//Will add logic later
+                            //If we got help request in DB push it to the soc client
+                            //Will add logic later
                                 break;
-//Raspberry asking for a key check
+                            //Raspberry asking for a key check
                             case "userKey":
                                 a = new DBAccess();
                                 Id = rW.read();

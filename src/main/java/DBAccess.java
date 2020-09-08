@@ -65,11 +65,11 @@ public class DBAccess implements Closeable {
     }
 
 //for registration on pregnant client
-    public void setUserData( String type, String name,String lastName,String login, int pass, int key) {
+    public void setUserData( String type, String name,String lastName,String login, int pass, int key, String email) {
         try {
-            statement.execute("INSERT INTO userdata ( type, name,lastname ,login, pass, userkey) VALUES (" +
+            statement.execute("INSERT INTO userdata ( type, name,lastname ,login, pass,email, userkey) VALUES (" +
                     "" + "'"+ type + "'" + "," + "'" + name+ "'" + "," + "'" + lastName+ "'" + "," +
-                    "'" + login + "'" + "," + pass + ","  + key + ");");
+                    "'" + login + "'" + "," + pass + "," + "'" + email + "',"  + key + ");");
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -138,22 +138,23 @@ public class DBAccess implements Closeable {
 
         return true;
     }
-    public void setPregnantData(  String name,String lastName,String login , int pass, int key) {
+    public void setPregnantData(  String name,String lastName,String login , int pass, int key, String email) {
         try {
            String type = "pregnant";
-            statement.execute("INSERT INTO userdata ( type, name,lastname ,login, pass, userkey) VALUES (" + "'"+ type + "'" + "," + "'" + name+ "'" + "," + "'" + lastName+ "'" + "," + "'" + login+ "'" + "," + pass + ","  + key + ");");
+            statement.execute("INSERT INTO userdata ( type, name,lastname ,login, pass,email, userkey) VALUES (" + "'"+ type + "'" + "," + "'" + name+ "'" + "," + "'" + lastName+ "'" + "," + "'" + login+ "'" + "," + pass + ","
+                    + "'" + email+ "'" + ","+ key + ");");
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
     public Object[] getUserData(String login, int pass) {
-        Object[] data = new Object[]{0, "null", "null", "null", "null", 0, 0};
+        Object[] data = new Object[]{0, "null", "null", "null", "null", 0, 0, "null"};
         try {
             ResultSet rs = statement.executeQuery("SELECT id,type ,name,lastname, login, pass, userkey FROM userdata WHERE login =" + "'" + login + "'" +" AND " + "pass="  + pass  );
             while(rs.next()) {
                 data = new Object[]{rs.getInt("id"), rs.getString("type"), rs.getString("name"),
-                        rs.getString("lastname"), rs.getString("login"), rs.getInt("pass"), rs.getInt("userkey")};
+                        rs.getString("lastname"), rs.getString("login"), rs.getInt("pass"),rs.getString("email"), rs.getInt("userkey")};
             }
             System.out.println("1");
             return data;
@@ -161,6 +162,30 @@ public class DBAccess implements Closeable {
 
             System.out.println("2");
             return data;
+        }
+    }
+    public int passRecover(String login, String email) {
+        int pass = 0;
+        try {
+            ResultSet rs = statement.executeQuery("SELECT pass FROM userdata WHERE login="  + "'" + login + "'" +" AND " + "'" + email + "'");
+            while (rs.next()) {
+                 pass = rs.getInt("pass");
+            }
+            return pass;
+        } catch (SQLException throwable) {
+            return pass;
+        }
+    }
+    public int resetPass(int Id, int pass){
+        try {
+            ResultSet rs = statement.executeQuery("UPDATE userdata SET pass= " + pass + " WHERE id= " + Id);
+            rs = statement.executeQuery("SELECT pass FROM userdata WHERE id= " + Id);
+            while (rs.next()){
+                pass = rs.getInt("pass");
+            }
+            return  pass;
+        } catch (SQLException throwables) {
+            return pass;
         }
     }
 
