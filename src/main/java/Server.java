@@ -169,7 +169,9 @@ public class Server {
                                 break;
                             //Raspberry asking for a key check
                             case "userKey":
+                                //pootis
                                 a = new DBAccess();
+                                while(true) {
                                 Id = rW.read();
                                 key = a.getKey(Id);
                                 if (key != 0) {
@@ -177,8 +179,8 @@ public class Server {
                                 }
                                 else if (key == 0) {
                                     rW.writeLine("Off");
-                                }
-                                break;
+                                }}
+
 
                         }
 

@@ -47,7 +47,7 @@ public class DBAccess implements Closeable {
         int key = 0;
 
         try {
-            ResultSet rs = statement.executeQuery("SELECT userkey FROM userdata WHERE id =" + userid);
+            ResultSet rs = statement.executeQuery("SELECT userkey FROM userdata WHERE login =" + userid);
             while (rs.next()) {
                 key = rs.getInt("userkey");
             }
