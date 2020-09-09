@@ -86,13 +86,11 @@ public class RW implements Closeable {
             writer.newLine();
             writer.flush();
             writer.write(password);
-            writer.newLine();
             writer.flush();
             writer.write(email);
             writer.newLine();
             writer.flush();
             writer.write(key);
-            writer.newLine();
             writer.flush();
         } catch (IOException e) {
             throw new RuntimeException(e);
