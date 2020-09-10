@@ -23,7 +23,6 @@ public class MailSender {
         Message message = prepareMessage(session, myAccountEmail, recipient, subject, text);
         Transport.send(message);
     }
-
     private static Message prepareMessage(Session session, String myAccountEmail, String recipient, String subject, String text){
         try {
             Message message = new MimeMessage(session);
@@ -36,7 +35,9 @@ public class MailSender {
             return null;
         }
     }
+
     public static void sendMail(String recipient, int key) throws MessagingException {
+
         Properties properties = new Properties();
         properties.put("mail.smtp.auth", "true");
         properties.put("mail.smtp.starttls.enable", "true");

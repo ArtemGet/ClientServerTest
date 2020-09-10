@@ -21,31 +21,9 @@ public class DBAccess implements Closeable {
             e.printStackTrace();
         }
     }
-//test method
-    public void printDB() {
-        ResultSet rs = null;
-        try {
-            rs = statement.executeQuery("SELECT * FROM userdata ");
-            while (rs.next()) {
-                int id = rs.getInt(1);
-                String name = rs.getString(2);
-                String desc = rs.getString(3);
-                System.out.print(id + " ");
-                System.out.print(name + " ");
-                System.out.println(desc);
 
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-    }
-
-//for verification on pregnant clien
     public int getKey(int id) {
-
         int key = 0;
-
         try {
             ResultSet rs = statement.executeQuery("SELECT userkey FROM userdata WHERE id =" + id);
             while (rs.next()) {
@@ -56,6 +34,54 @@ public class DBAccess implements Closeable {
             return 0;
         }
     }
+    public int getId(Object[] userData) {
+        //num pass name lastname login email
+        // String name, int pass
+        int id = 0;
+        int pass = (int)userData[1];
+        String login = (String)userData[4];
+        try {
+           ResultSet rs = statement.executeQuery("SELECT id FROM userdata WHERE " + "login=" + "'" + login + "' AND " + "pass="  + pass);
+        while (rs.next()) {
+            id = rs.getInt("id");
+            return id;
+        }
+        } catch (SQLException e) {
+            //return 0;
+        }
+        return id;
+    }
+    public int getId(int key) {
+
+        int id = 0;
+        try {
+            ResultSet rs = statement.executeQuery("SELECT id FROM userdata WHERE userkey =" + key);
+            while (rs.next()) {
+                id = rs.getInt("id");
+                return id;
+            }
+        } catch (SQLException e) {
+        }
+        return id;
+    }
+    public Object[] getPregnantData(String login, int pass) {
+        //дописать проверку на null
+        Object[] data = new Object[]{0, 0, 0, "null", "null","null", "null"};
+        try {
+            ResultSet rs = statement.executeQuery("SELECT id,name,lastname, login, pass, email, userkey FROM userdata WHERE login =" + "'" + login + "'" +" AND " + "pass="  + pass  );
+            while(rs.next()) {
+                data = new Object[]{rs.getInt("id"),rs.getInt("pass"), rs.getInt("userkey"), rs.getString("name"), rs.getString("lastname"),
+                        rs.getString("login"), rs.getString("email")};
+            }
+            if ((int)data[0] == 0) {
+                data = new Object[]{0, 0, 0, "null", "null","null", "null"};
+            }
+            return data;
+        } catch (SQLException throwable) {
+            return data;
+        }
+    }
+
     public boolean checkKey(int key) {
         int checkKey = 0;
         try {
@@ -73,152 +99,73 @@ public class DBAccess implements Closeable {
             return false;
         }
     }
-    public void insertKey(int id, int key) {
+    public boolean checkPaperRegistered(Object[] userData) {
+        int num = (int) userData[0];
+        String name = (String) userData[2];
+        String lastName = (String) userData[3];
+        int registered = 0;
         try {
-            statement.executeUpdate("UPDATE userdata SET userkey=" + key + " where id=" + id);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-//for registration on pregnant client
-    public void setUserData( String type, String name,String lastName,String login, int pass, int key, String email) {
-        try {
-            statement.execute("INSERT INTO userdata ( type, name,lastname ,login, pass,email, userkey) VALUES (" +
-                    "" + "'"+ type + "'" + "," + "'" + name+ "'" + "," + "'" + lastName+ "'" + "," +
-                    "'" + login + "'" + "," + pass + "," + "'" + email + "',"  + key + ");");
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-    public int getId(String type, String name, int pass) {
-        int id = 0;
-        try {
-           ResultSet rs = statement.executeQuery("SELECT id FROM userdata WHERE type =" + "'" + type + "' AND " + "name=" + "'" + name + "' AND " + "pass="  + pass);
-        while (rs.next()) {
-            id = rs.getInt("id");
-            return id;
-        }
-        } catch (SQLException e) {
-            //return 0;
-        }
-        return id;
-    }
-    public int getId(int key) {
-        int id = 0;
-        try {
-            ResultSet rs = statement.executeQuery("SELECT id FROM userdata WHERE userkey =" + key);
+            ResultSet rs = statement.executeQuery("SELECT registered FROM paper WHERE number =" + num + " AND " + "name=" + "'" + name + "' AND " + "lastname=" + "'" + lastName + "'");
             while (rs.next()) {
-                id = rs.getInt("id");
-                return id;
+                registered = rs.getInt("registered");
             }
-        } catch (SQLException e) {
-        }
-        return id;
-    }
-
-
-//for verification client (need to be tested)
-    public ArrayList<String> getUnverifiedData() {
-        ArrayList<String> userData = new ArrayList<>();
-        try {
-            ResultSet rs = statement.executeQuery("SELECT type, name FROM userdata WHERE userkey=0" );
-            while (rs.next()) {
-                    userData.add( rs.getString("type") + " " + rs.getString("name"));
+            if (registered == 1) {
+                return true;
             }
-            return userData;
-        } catch (SQLException e){
-            userData.clear();
-            userData.add("");
-            return userData;
-        }
-    }
-    public ArrayList<Integer> getUnverifiedId() {
-        ArrayList<Integer> id = new ArrayList<>();
-        try {
-            ResultSet rs = statement.executeQuery("SELECT  id FROM userdata WHERE userkey=0 " );
-            while (rs.next() ) {
-                id.add(rs.getInt("id"));
+            else {
+                return false;
             }
-            return id;
-        } catch (SQLException e){
-            id.clear();
-            id.set(0, 404);
-            return id;
+        } catch (SQLException throwable) {
+            throwable.printStackTrace();
         }
+        return false;
     }
-
-    public boolean checkPregnantPaper(int num, String name, String lastname) {
+    public boolean checkPregnantPaper(Object[] userData) {
+        // num pass name lastname login email
+        //needs num, String name, String lastname
+        int num = (int)userData[0];
+        String name = (String)userData[2];
+        String lastName = (String)userData[3];
         int number = 0;
         try {
-            ResultSet rs = statement.executeQuery("SELECT number FROM paper WHERE number =" + "'" + num + "' AND " + "name=" + "'" + name + "' AND " + "lastname="  + "'" + lastname + "'" );
-        while (rs.next()) {
-            number = rs.getInt("number");
-        }
+            ResultSet rs = statement.executeQuery("SELECT number FROM paper WHERE number =" + num + " AND " + "name=" + "'" + name + "' AND " + "lastname="  + "'" + lastName + "'");
+            while (rs.next()) {
+                number = rs.getInt("number");
+            }
         if (number == num) {
             return true;
         }
         else {
             return false;
         }
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
+        } catch (SQLException throwable) {
+            throwable.printStackTrace();
         }
 
         return true;
     }
-    public void setPregnantData(  String name,String lastName,String login , int pass, int key, String email) {
+    public boolean checkLoginExists(Object[] userData) {
+        String login = (String)userData[4];
+        String logincheck = "";
+        ResultSet rss = null;
         try {
-           String type = "pregnant";
-            statement.execute("INSERT INTO userdata ( type, name,lastname ,login, pass,email, userkey) VALUES (" + "'"+ type + "'" + "," + "'" + name+ "'" + "," + "'" + lastName+ "'" + "," + "'" + login+ "'" + "," + pass + ","
-                    + "'" + email+ "'" + ","+ key + ");");
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public Object[] getUserData(String login, int pass) {
-        Object[] data = new Object[]{0, "null", "null", "null", "null", 0,"null", 0};
-        try {
-            ResultSet rs = statement.executeQuery("SELECT id,type ,name,lastname, login, pass, email, userkey FROM userdata WHERE login =" + "'" + login + "'" +" AND " + "pass="  + pass  );
-            while(rs.next()) {
-                data = new Object[]{rs.getInt("id"), rs.getString("type"), rs.getString("name"),
-                        rs.getString("lastname"), rs.getString("login"), rs.getInt("pass"),rs.getString("email"), rs.getInt("userkey")};
+            rss = statement.executeQuery("SELECT login FROM userdata WHERE login= '" + login + "'");
+            while (rss.next()) {
+                logincheck = rss.getString("login");
             }
-            if ((int)data[0] == 0) {
-                data = new Object[]{0, "null", "null", "null", "null", 0,"null", 0};
+            if (login.equals(logincheck)) {
+                return true;
             }
-            return data;
+            else {
+                return false;
+            }
         } catch (SQLException throwable) {
-            return data;
+            throwable.printStackTrace();
         }
+        return false;
     }
-    public int passRecover(String login, String email) {
-        int pass = 0;
-        try {
-            ResultSet rs = statement.executeQuery("SELECT pass FROM userdata WHERE login="  + "'" + login + "'" +" AND " + "email= " + "'" + email + "'");
-            while (rs.next()) {
-                 pass = rs.getInt("pass");
-            }
-            return pass;
-        } catch (SQLException throwable) {
-            return pass;
-        }
-    }
-    public int resetPass(int Id, int pass){
-        try {
-            int rss = statement.executeUpdate("UPDATE userdata SET pass= " + pass + " WHERE id= " + Id);
-            ResultSet rs = statement.executeQuery("SELECT pass FROM userdata WHERE id= " + Id);
-            while (rs.next()){
-                pass = rs.getInt("pass");
-            }
-            return  pass;
-        } catch (SQLException throwables) {
-            return pass;
-        }
-    }
-    public boolean checkVerif(int Id) {
-int registered = 0;
+    public boolean checkVerified(int Id) {
+        int registered = 0;
         try {
             ResultSet rs = statement.executeQuery("SELECT registered FROM userdata WHERE id= " + Id);
             while (rs.next()) {
@@ -231,11 +178,11 @@ int registered = 0;
             else {
                 return false;
             }
-    } catch (SQLException throwables) {
-        return false;
+        } catch (SQLException throwables) {
+            return false;
+        }
     }
-    }
-    public boolean checkVerif(String login,int pass) {
+    public boolean checkVerified(String login,int pass) {
         int registered = 0;
         try {
             ResultSet rs = statement.executeQuery("SELECT registered FROM userdata WHERE login= " + "'" + login + "'" + " AND " + "pass= " + pass);
@@ -253,9 +200,77 @@ int registered = 0;
             return false;
         }
     }
+
+    public void registerPregnantPaper(int num, String name, String lastName) {
+        try {
+            statement.executeUpdate("UPDATE paper SET registered=1 WHERE number =" + num + " AND " + "name=" + "'" + name + "' AND " + "lastname="  + "'" + lastName + "'");
+        } catch (SQLException throwable) {
+            throwable.printStackTrace();
+        }
+    }
+    public void insertKey(int id, int key) {
+        try {
+            statement.executeUpdate("UPDATE userdata SET userkey=" + key + " where id=" + id);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    public void setPregnantData(Object[] userData, int key) {
+        //num pass name lastname login email
+        int pass = (int)userData[1];
+        String name = (String)userData[2];
+        String lastName = (String) userData[3];
+        String login = (String)userData[4];
+        String email = (String)userData[5];
+        try {
+            statement.execute("INSERT INTO userdata (name,lastname ,login, pass,email, userkey) VALUES (" + "'" + name+ "'" + "," + "'" + lastName+ "'" + "," + "'" + login+ "'" + "," + pass + ","
+                    + "'" + email+ "'" + ","+ key + ");");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    public void resetPregnantData(Object[] userData, int key) {
+        int pass = (int)userData[1];
+        String name = (String)userData[2];
+        String lastName = (String) userData[3];
+        String login = (String)userData[4];
+        String email = (String)userData[5];
+        try {
+            statement.executeUpdate("UPDATE userdata SET name=" + "'" + name + "'" + "," +" lastname=" + "'" + lastName + "'" + "," + " login="  + "'" + login + "'"
+                            + "," + " pass=" + pass + "," +  " email=" + "'" + email+ "'" + "," +  " userkey=" + key + " WHERE login=" + "'" + login + "'");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public int passRecover(String login, String email) {
+        int pass = 0;
+        try {
+            ResultSet rs = statement.executeQuery("SELECT pass FROM userdata WHERE login="  + "'" + login + "'" +" AND " + "email= " + "'" + email + "'");
+            while (rs.next()) {
+                 pass = rs.getInt("pass");
+            }
+            return pass;
+        } catch (SQLException throwable) {
+            return pass;
+        }
+    }
+    public int resetPass(int Id, int pass){
+        try {
+            statement.executeUpdate("UPDATE userdata SET pass= " + pass + " WHERE id= " + Id);
+            ResultSet rs = statement.executeQuery("SELECT pass FROM userdata WHERE id= " + Id);
+            while (rs.next()){
+                pass = rs.getInt("pass");
+            }
+            return  pass;
+        } catch (SQLException throwable) {
+            return pass;
+        }
+    }
+
     public void verify(int Id){
         try {
-            int rs = statement.executeUpdate("UPDATE userdata SET registered= " + 1 + " WHERE id= " + Id + ";");
+            int update = statement.executeUpdate("UPDATE userdata SET registered= " + 1 + " WHERE id= " + Id + ";");
         } catch (SQLException throwables) {
         }
     }
