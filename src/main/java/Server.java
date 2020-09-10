@@ -15,7 +15,7 @@ public class Server {
 
                     RW rW = new RW(server);
                     new Thread(()->{
-                        String gay = rW.readLine();
+                        String input = rW.readLine();
                         int Id;
                         int key = 0;
                         String login;
@@ -24,41 +24,10 @@ public class Server {
                         Object[] userData;
 
 
-                        switch (gay) {
-                            //Registration Android Client
-                            case "userRegData" :
-                                a = new DBAccess();
-                                 userData = rW.readUserData();
-                                System.out.println("userRegData");
-                                key = Gen.genKey();
-                                Id = a.getId((String)userData[0], (String)userData[1], (int)userData[4]);
-                                if (Id == 0) {
-                                    System.out.println("1");
-                                        try {
-                                            MailSender.sendMail((String) userData[5], key);
-                                        } catch (MessagingException e) {
-                                        }
-                                    a.setUserData((String) userData[0], (String) userData[1], (String) userData[2],(String) userData[3], (int) userData[4], key, (String)userData[5]);
-                                        rW.writeLine("wait");
-                                }
-                                else if(Id != 0) {
-                                    System.out.println("2");
-                                    if (!a.checkVerif(Id)) {
-                                        try {
-                                            MailSender.sendMail((String) userData[5], key);
-                                        } catch (MessagingException e) {
-                                        }
-                                        //сделать замену в бд, а не добавление нового
-                                        a.setUserData((String) userData[0], (String) userData[1], (String) userData[2],(String) userData[3], (int) userData[4], key, (String)userData[5]);
-                                        rW.writeLine("wait");
-                                    }
-                                    else {
-                                        rW.writeLine("exist");
-                                    }
-                                }
-
-                                break;
+                        switch (input) {
                             case "regPregnant":
+                                //добавить проверку на существующий логин
+                                //сделать замену в бд, а не добавление нового
                                 System.out.println("regPregnant");
                                 a = new DBAccess();
                                 userData = rW.readPregnantData();
@@ -106,27 +75,6 @@ public class Server {
                                 else {
                                     rW.write(0);
                                 }
-                                /*
-                               while (keyCheck != key)
-                                        keyCheck = rW.read();
-                                    if (keyCheck == key) {
-                                        a.setUserData((String) userData[0], (String) userData[1], (String) userData[2],(String) userData[3], (int) userData[4], key, (String)userData[5]);
-                                        Id = a.getId((String) userData[0], (String) userData[1], (int) userData[4]);
-                                        System.out.println(Id);
-                                        rW.write(Id);
-                                        rW.write(key);
-                                    }
-                                    else {
-                                        //wrong key
-                                        rW.write(1);
-                                        rW.write(1);
-                                    }
-                                }
-                                else {
-                                    rW.write(0);
-                                    rW.write(0);
-                                }
-                                 */
                                 break;
                             case "login":
                                 a = new DBAccess();
@@ -168,63 +116,6 @@ public class Server {
                                pass = rW.read();
                                rW.write(a.resetPass(Id,pass));
                                 break;
-                            //Adding key to Android Client after verification
-                           /* case "userId":
-                                Id = rW.read();
-                                a = new DBAccess();
-                                key = a.getKey(Id);
-                                if (key != 0) {
-
-                                    rW.write(key);
-                                }
-                                else {
-                                    try {
-                                        rW.close();
-                                    } catch (IOException e) {
-                                        e.printStackTrace();
-                                    }
-                                }
-                                break; */
-                            //Verify Android Client
-                            /*case "adminId":
-                                System.out.println("connected");
-                                a = new DBAccess();
-                                ArrayList<Integer> ID = a.getUnverifiedId();
-                                ArrayList<String> DATA =  a.getUnverifiedData();
-                                rW.writeUnverified(ID,DATA);
-                                String respond = rW.readLine();
-                                System.out.println(respond);
-
-                                //respond = "disconnect";
-                                while( respond.equals("disconnect") != true) {
-                                    if (respond.equals("takeId")) {
-                                        System.out.println("взял");
-                                        ArrayList<Integer> verifiedId = rW.readVerifiedId();
-                                        for (int b : verifiedId
-                                        ) {
-                                            a.insertKey(b, Gen.genKey());
-                                        }
-                                    }
-                                    else if (respond.equals("refresh")) {
-                                        System.out.println("рефрешнул");
-                                        ID = a.getUnverifiedId();
-                                        DATA =  a.getUnverifiedData();
-                                        rW.writeUnverified(ID,DATA);
-                                    }
-                                    respond = rW.readLine();
-
-                                }
-                                break;*/
-                            case "userHelpRequest":
-                                String[] help = rW.readHelp();
-                                rW.writeLine("Help is incoming");
-                            //Attaching help[] request to the id the DB
-                                break;
-                            case  "socId":
-                            //If we got help request in DB push it to the soc client
-                            //Will add logic later
-                                break;
-                            //Raspberry asking for a key check
                             case "userKey":
                                 //pootis
                                 System.out.println("userKey");
@@ -241,25 +132,13 @@ public class Server {
                                     rW.writeLine("Off");
                                     System.out.println("Off");
                                 }}
-
-
                         }
-
                     }).start();
-
-
-
             }
         }
 
         catch (IOException e) {
             throw new RuntimeException(e);
-
         }
-
-
-
-
-
     }
 }
