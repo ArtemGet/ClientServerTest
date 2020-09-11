@@ -31,6 +31,8 @@ public class Server {
                                 boolean loginCheck = a.checkLoginExists(userData);
                                 boolean paperRegistered = a.checkPaperRegistered(userData);
                                 System.out.println(paperCheck);
+                                System.out.println(loginCheck);
+                                System.out.println(paperRegistered);
                                 key = genKey();
 
                                 if (paperCheck && !paperRegistered && !loginCheck && a.getId(userData) == 0) {
@@ -42,7 +44,6 @@ public class Server {
                                     rW.writeLine("wait");
                                 }
                                 else if (paperCheck && !paperRegistered && loginCheck && a.getId(userData) != 0 ) {
-                                    System.out.println("1");
                                     if (!a.checkVerified(a.getId(userData))) {
                                         try {
                                             MailSender.sendMail((String)userData[5], key);

@@ -12,6 +12,7 @@ public class DBAccess implements Closeable {
     private static final String PASSWORD = "root";
     private Connection connection;
     private Statement statement;
+    private PreparedStatement prStatement;
 
     public DBAccess() {
         try {
@@ -35,8 +36,7 @@ public class DBAccess implements Closeable {
         }
     }
     public int getId(Object[] userData) {
-        //num pass name lastname login email
-        // String name, int pass
+        
         int id = 0;
         int pass = (int)userData[1];
         String login = (String)userData[4];
@@ -105,7 +105,8 @@ public class DBAccess implements Closeable {
         String lastName = (String) userData[3];
         int registered = 0;
         try {
-            ResultSet rs = statement.executeQuery("SELECT registered FROM paper WHERE number =" + num + " AND " + "name=" + "'" + name + "' AND " + "lastname=" + "'" + lastName + "'");
+            ResultSet rs = statement.executeQuery("SELECT registered FROM paper WHERE number =" + num + " AND " +
+                    "name=" + "'" + name + "' AND " + "lastname=" + "'" + lastName + "'");
             while (rs.next()) {
                 registered = rs.getInt("registered");
             }
@@ -148,9 +149,11 @@ public class DBAccess implements Closeable {
         String login = (String)userData[4];
         String logincheck = "";
         ResultSet rss = null;
+        int c = 0;
         try {
             rss = statement.executeQuery("SELECT login FROM userdata WHERE login= '" + login + "'");
             while (rss.next()) {
+                c++;
                 logincheck = rss.getString("login");
             }
             if (login.equals(logincheck)) {
