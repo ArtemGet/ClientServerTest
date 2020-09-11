@@ -14,6 +14,8 @@ public class DBAccess implements Closeable {
     private Statement statement;
     private PreparedStatement prStatement;
 
+    private static final String GET_ID = "SELECT id FROM userdata WHERE ? AND ?";
+
     public DBAccess() {
         try {
             this.connection = DriverManager.getConnection(URL,USERNAME,PASSWORD);
@@ -36,18 +38,20 @@ public class DBAccess implements Closeable {
         }
     }
     public int getId(Object[] userData) {
-        
         int id = 0;
         int pass = (int)userData[1];
         String login = (String)userData[4];
         try {
+            //prStatement = connection.prepareStatement(GET_ID);
+            //prStatement.setString(1,login);
+            //prStatement.setInt(2,pass);
+            //ResultSet rs = prStatement.executeQuery();
            ResultSet rs = statement.executeQuery("SELECT id FROM userdata WHERE " + "login=" + "'" + login + "' AND " + "pass="  + pass);
         while (rs.next()) {
             id = rs.getInt("id");
-            return id;
         }
+            return id;
         } catch (SQLException e) {
-            //return 0;
         }
         return id;
     }

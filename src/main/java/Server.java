@@ -3,7 +3,6 @@
 import javax.mail.MessagingException;
 import java.io.*;
 import java.net.ServerSocket;
-import java.util.ArrayList;
 
 
 public class Server {
@@ -24,7 +23,6 @@ public class Server {
 
                         switch (input) {
                             case "regPregnant":
-                                //fix multi paper registration
                                 a = new DBAccess();
                                 userData = rW.readPregnantData();
                                 boolean paperCheck = a.checkPregnantPaper(userData);
@@ -44,6 +42,7 @@ public class Server {
                                     rW.writeLine("wait");
                                 }
                                 else if (paperCheck && !paperRegistered && loginCheck && a.getId(userData) != 0 ) {
+                                    System.out.println( a.getId(userData));
                                     if (!a.checkVerified(a.getId(userData))) {
                                         try {
                                             MailSender.sendMail((String)userData[5], key);
@@ -51,9 +50,6 @@ public class Server {
                                         }
                                         a.resetPregnantData(userData, key);
                                         rW.writeLine("wait");
-                                    }
-                                    else {
-                                        rW.writeLine("exist");
                                     }
                                 }
                                 else {
@@ -81,6 +77,7 @@ public class Server {
                                 a = new DBAccess();
                                 login = rW.readLine();
                                  pass = rW.read();
+                                System.out.println("logged");
                                 rW.writePregnantData(a.getPregnantData(login,pass));
                                 break;
                             case "passRecover":
@@ -103,15 +100,20 @@ public class Server {
                                rW.write(a.resetPass(Id,pass));
                                 break;
                             case "userKey":
+                                System.out.println("Raspberry connected");
                                 a = new DBAccess();
                                 while(true) {
                                 Id = rW.read();
+                                    System.out.println(Id);
                                 key = a.getKey(Id);
+                                    System.out.println(key);
                                 if (key != 0) {
                                     rW.writeLine("On");
+                                    System.out.println("On");
                                 }
                                 else if (key == 0) {
                                     rW.writeLine("Off");
+                                    System.out.println("Off");
                                 }}
                         }
                     }).start();
