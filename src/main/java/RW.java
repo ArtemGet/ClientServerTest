@@ -88,10 +88,9 @@ public class RW implements Closeable {
         }
     }
     public void writeHelpData(String[] helpData) {
-        for (String a: helpData
-        ) {
+        for (int i = 0; i < helpData.length; i++) {
             try {
-                writer.write(a);
+                writer.write(helpData[i]);
                 writer.newLine();
                 writer.flush();
             } catch (IOException e) {
@@ -110,9 +109,8 @@ public class RW implements Closeable {
     public String[] readHelpRequest() {//login,name, lastname, station in, station out, время, comment
         try {
             String[] helpData = new String[7];
-            for (String a: helpData
-            ) {
-                a = reader.readLine();
+            for (int i = 0; i < helpData.length; i++) {
+                helpData[i] = reader.readLine();
             }
             return helpData;
         } catch (IOException e) {

@@ -9,7 +9,7 @@ public class DBAccess implements Closeable {
     private static final String URL = "jdbc:mysql://localhost:3306/mydbtest?useUnicode=true&useSSL=true&useJDBCCompliantTimezoneShift=true" +
             "&useLegacyDatetimeCode=false&serverTimezone=UTC";
     private static final String USERNAME = "root";
-    private static final String PASSWORD = "root1234";
+    private static final String PASSWORD = "root";
     private Connection connection;
     private Statement statement;
     private PreparedStatement prStatement;
@@ -100,7 +100,7 @@ public class DBAccess implements Closeable {
                 rs = statement.executeQuery("SELECT * FROM help where query=1");
                 while (rs.next()) {//login,name, lastname, station in, station out, время, comment
                     for (int i = 0; i < 7; i++) {
-                        helpData[i] = rs.getString(i);
+                        helpData[i] = rs.getString(i+1);
                     }
                     helpData[7] = String.valueOf(rs.getInt("query"));
                 }
@@ -117,7 +117,7 @@ public class DBAccess implements Closeable {
                     data = rs.getInt("query");
                     if (data == increment) {
                         for (int i = 0; i < 7; i++) {
-                            helpData[i] = rs.getString(i);
+                            helpData[i] = rs.getString(i+1);
                         }
                         helpData[7] = String.valueOf(rs.getInt("query"));
                     }
@@ -324,7 +324,7 @@ public class DBAccess implements Closeable {
             statement.execute("INSERT INTO help (login,name,lastname,stin,stout,time,comment) VALUES ("
                     + "'" + helpData[0] + "'" + "," + "'" + helpData[1]+ "'" + ","+ "'" + helpData[2]+ "'" + ","
                     + "'" + helpData[3]+ "'" + "," + "'" + helpData[4]+ "'" + "," + "'" + helpData[5]+ "'" + ","
-                    + "'" + helpData[6]+ "'" + ",");
+                    + "'" + helpData[6]+ "'" + ");");
         } catch (SQLException throwable) {
             throwable.printStackTrace();
         }
@@ -363,6 +363,7 @@ public class DBAccess implements Closeable {
         }
     }
 
+
     public void verify(int Id){
         try {
             int update = statement.executeUpdate("UPDATE userdata SET registered= " + 1 + " WHERE id= " + Id + ";");
@@ -373,7 +374,7 @@ public class DBAccess implements Closeable {
     public void clearHelpData(String queryString) {
         int query = Integer.parseInt(queryString);
         try {
-            ResultSet rs = statement.executeQuery("DELETE FROM help * WHERE query=" + query);
+            statement.executeUpdate("DELETE FROM help WHERE query=" + query);
         } catch (SQLException throwable) {
             throwable.printStackTrace();
         }

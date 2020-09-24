@@ -9,7 +9,7 @@ import java.util.ArrayList;
 public class Server {
     public static void main(String[] args) {
 
-        try (ServerSocket server = new ServerSocket(900)) {
+        try (ServerSocket server = new ServerSocket(9000)) {
             System.out.println("Start");
             while (true) {
                 RW rW = new RW(server);
@@ -86,18 +86,18 @@ public class Server {
                             break;
                         case "verify":
                             userData = rW.readVerificationInf();
-// key num name lastname type
+// id num name lastname type
                             a = new DBAccess();
                             System.out.println((String) userData[4]);
-                            if (a.checkKey((int)userData[0]) && ((String) userData[4]).equals("Беременная")) {
-                                //Васе добавить в код pregnant
+                            if (a.checkKey((int)userData[0]) && ((String) userData[4]).equals("pregnant")) {
                                 System.out.println("pr verif");
+                                System.out.println((int)userData[1]);
                                 a.registerPregnantPaper((int)userData[1],(String)userData[2],(String)userData[3]);
                                 a.verify(a.getId((int)userData[0]));
                                 rW.write(a.getId((int)userData[0]));
                                 System.out.println(a.getId((int)userData[0]));
                             }
-                            else if (a.checkKey((int)userData[0]) && !((String) userData[4]).equals("Беременная")) {
+                            else if (a.checkKey((int)userData[0]) && !((String) userData[4]).equals("pregnant")) {
                                 System.out.println("user verif");
                                 a.verify(a.getId((int)userData[0]));
                                 rW.write(a.getId((int)userData[0]));
@@ -155,37 +155,44 @@ public class Server {
                             System.out.println("helpRequest");
                             a = new DBAccess();
                             helpData = rW.readHelpRequest();
-                            a.insertHelpData(helpData);
                             for (String b: helpData
                             ) {
                                 System.out.println(b);
                             }
-                            boolean helpAccepted = a.getHelpAccepted(helpData[0]);
-                            while (!helpAccepted) {
-                                helpAccepted = a.getHelpAccepted(helpData[0]);
-                            }
-                            a.resetHelpAccepted(helpData[0]);
-                            rW.writeLine("helpAccepted");
-                            //тут чат
+                            a.insertHelpData(helpData);
+
+                           // boolean helpAccepted = a.getHelpAccepted(helpData[0]);
+                           // while (!helpAccepted) {
+                           //     helpAccepted = a.getHelpAccepted(helpData[0]);
+                           // }
+                           // a.resetHelpAccepted(helpData[0]);
+                           // rW.writeLine("helpAccepted");
+
                             break;
                         case "helpGet":
-                            a = new DBAccess();
-                            helpData = a.getHelpData();
-                            rW.writeHelpData(helpData);
+                            //a = new DBAccess();
+                            //helpData = a.getHelpData();
+                            ////добавить отправку на null
+                            //rW.writeHelpData(helpData);
+                            ////высылать name stin stout time comment
                             String resp = rW.readLine();
+                            System.out.println(resp);
                             if (resp.equals("accepted")) {
-                                a.clearHelpData(helpData[7]);
-                                a.setHelpAccepted(helpData[0]);
+                                //System.out.println(helpData[7]);
+                                //System.out.println(helpData[0]);
+                                a.clearHelpData("3"); //helpData[7]
+                                a.setHelpAccepted("1"); //helpData[0]
                             }
 
-                            //тут открываем ламповый чатик
-                            //закрывается при нажатии на кнопку сдать заказ
-                            //отправляется логин инвалида
                             break;
                         case "helpWaitWheel":
-                            //берес с бд логин
-                            //если yes - wait
-                            //если no - accept
+                            login = rW.readLine();
+                            boolean helpAccepted = a.getHelpAccepted(login);
+                             while (!helpAccepted) {
+                                 helpAccepted = a.getHelpAccepted(login);
+                             }
+                             a.resetHelpAccepted(login);
+                             rW.writeLine("helpAccepted");
                             break;
                         case "helpWaitSoc":
                             a = new DBAccess();
