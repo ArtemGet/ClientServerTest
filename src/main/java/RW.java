@@ -64,15 +64,25 @@ public class RW implements Closeable {
         }
     }
 
+<<<<<<< HEAD
     public Object[] readUserData()  { //num pass name lastname login email type
         try {
             Object[] userData = new Object[]{reader.read(),reader.read(),reader.readLine(),reader.readLine(),reader.readLine(), reader.readLine(), reader.readLine()};
+=======
+    public Object[] readPregnantData()  { //num pass name lastname login email
+        try {
+            Object[] userData = new Object[]{reader.read(),reader.read(),reader.readLine(),reader.readLine(),reader.readLine(), reader.readLine()};
+>>>>>>> 3815a0a9139e7fdb126b4a5725dfad6f9ed0664e
             return userData;
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
+<<<<<<< HEAD
     public  void writeUserData(Object[] pregnantData) { //id pass userKey name lastname login email type
+=======
+    public  void writePregnantData(Object[] pregnantData) { //id pass userKey name lastname login email
+>>>>>>> 3815a0a9139e7fdb126b4a5725dfad6f9ed0664e
         try {
             for (int a = 0; a <= 2; a++) {
                 writer.write((int)pregnantData[a]);
@@ -87,6 +97,7 @@ public class RW implements Closeable {
             throw new RuntimeException(e);
         }
     }
+<<<<<<< HEAD
     public void writeHelpData(String[] helpData) {
         for (String a: helpData
              ) {
@@ -119,6 +130,8 @@ public class RW implements Closeable {
             throw new RuntimeException(e);
         }
     }
+=======
+>>>>>>> 3815a0a9139e7fdb126b4a5725dfad6f9ed0664e
     @Override
     public void close() throws IOException {
         writer.close();

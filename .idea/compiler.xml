@@ -3,6 +3,10 @@
   <component name="CompilerConfiguration">
     <bytecodeTargetLevel>
       <module name="Client" target="1.5" />
+<<<<<<< HEAD
+=======
+      <module name="Server" target="1.5" />
+>>>>>>> 3815a0a9139e7fdb126b4a5725dfad6f9ed0664e
     </bytecodeTargetLevel>
   </component>
 </project>

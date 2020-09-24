@@ -3,13 +3,20 @@
 import javax.mail.MessagingException;
 import java.io.*;
 import java.net.ServerSocket;
+<<<<<<< HEAD
 import java.util.ArrayList;
+=======
+>>>>>>> 3815a0a9139e7fdb126b4a5725dfad6f9ed0664e
 
 
 public class Server {
     public static void main(String[] args) {
 
+<<<<<<< HEAD
         try (ServerSocket server = new ServerSocket(900)) {
+=======
+        try (ServerSocket server = new ServerSocket(9000)) {
+>>>>>>> 3815a0a9139e7fdb126b4a5725dfad6f9ed0664e
             System.out.println("Start");
             while (true) {
                     RW rW = new RW(server);
@@ -21,6 +28,7 @@ public class Server {
                         int pass;
                         DBAccess a;
                         Object[] userData;
+<<<<<<< HEAD
                         boolean loginCheck;
                         String[] helpData;
                         a = new DBAccess();
@@ -63,6 +71,23 @@ public class Server {
 
                                 if (paperCheck && !paperRegistered && !loginCheck && a.getId(userData) == 0) {
                                     a.setUserData(userData, key);
+=======
+
+                        switch (input) {
+                            case "regPregnant":
+                                a = new DBAccess();
+                                userData = rW.readPregnantData();
+                                boolean paperCheck = a.checkPregnantPaper(userData);
+                                boolean loginCheck = a.checkLoginExists(userData);
+                                boolean paperRegistered = a.checkPaperRegistered(userData);
+                                System.out.println(paperCheck);
+                                System.out.println(loginCheck);
+                                System.out.println(paperRegistered);
+                                key = genKey();
+
+                                if (paperCheck && !paperRegistered && !loginCheck && a.getId(userData) == 0) {
+                                    a.setPregnantData(userData, key);
+>>>>>>> 3815a0a9139e7fdb126b4a5725dfad6f9ed0664e
                                     try {
                                         MailSender.sendMail((String) userData[5], key);
                                     } catch (MessagingException e) {
@@ -85,6 +110,7 @@ public class Server {
                                 }
                                 break;
                             case "verify":
+<<<<<<< HEAD
                                userData = rW.readVerificationInf();
 // key num name lastname type
                                 a = new DBAccess();
@@ -103,6 +129,19 @@ public class Server {
                                     rW.write(a.getId((int)userData[0]));
                                     System.out.println(a.getId((int)userData[0]));
 
+=======
+                                key = rW.read();
+                               int number = rW.read();
+                               String  name = rW.readLine();
+                               String lastName = rW.readLine();
+
+                                a = new DBAccess();
+                                if (a.checkKey(key)) {
+                                    a.registerPregnantPaper(number,name,lastName);
+                                    a.verify(a.getId(key));
+                                    System.out.println(a.getId(key));
+                                    rW.write(a.getId(key));
+>>>>>>> 3815a0a9139e7fdb126b4a5725dfad6f9ed0664e
                                 }
                                 else {
                                     rW.write(0);
@@ -113,7 +152,11 @@ public class Server {
                                 login = rW.readLine();
                                  pass = rW.read();
                                 System.out.println("logged");
+<<<<<<< HEAD
                                 rW.writeUserData(a.getUserData(login,pass));
+=======
+                                rW.writePregnantData(a.getPregnantData(login,pass));
+>>>>>>> 3815a0a9139e7fdb126b4a5725dfad6f9ed0664e
                                 break;
                             case "passRecover":
                                 a = new DBAccess();
@@ -150,6 +193,7 @@ public class Server {
                                     rW.writeLine("Off");
                                     System.out.println("Off");
                                 }}
+<<<<<<< HEAD
                             case "helpRequest":
                                 //login,name, lastname, station in, station out, время, comment
                                 System.out.println("helpRequest");
@@ -197,6 +241,8 @@ public class Server {
                                    // }
                               //  }
                                 //break;
+=======
+>>>>>>> 3815a0a9139e7fdb126b4a5725dfad6f9ed0664e
                         }
                     }).start();
             }
@@ -206,6 +252,13 @@ public class Server {
     }
 
     public static int genKey(){
+<<<<<<< HEAD
+=======
+          int s = -1;
+          int p = 499;
+          int w = 999;
+          int Id = 0;
+>>>>>>> 3815a0a9139e7fdb126b4a5725dfad6f9ed0664e
         return (int)(Math.random()*8999+1000);
     }
 }
