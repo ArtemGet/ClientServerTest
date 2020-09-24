@@ -9,11 +9,7 @@ public class DBAccess implements Closeable {
     private static final String URL = "jdbc:mysql://localhost:3306/mydbtest?useUnicode=true&useSSL=true&useJDBCCompliantTimezoneShift=true" +
             "&useLegacyDatetimeCode=false&serverTimezone=UTC";
     private static final String USERNAME = "root";
-<<<<<<< HEAD
     private static final String PASSWORD = "root1234";
-=======
-    private static final String PASSWORD = "root";
->>>>>>> 3815a0a9139e7fdb126b4a5725dfad6f9ed0664e
     private Connection connection;
     private Statement statement;
     private PreparedStatement prStatement;
@@ -50,10 +46,10 @@ public class DBAccess implements Closeable {
             //prStatement.setString(1,login);
             //prStatement.setInt(2,pass);
             //ResultSet rs = prStatement.executeQuery();
-           ResultSet rs = statement.executeQuery("SELECT id FROM userdata WHERE " + "login=" + "'" + login + "' AND " + "pass="  + pass);
-        while (rs.next()) {
-            id = rs.getInt("id");
-        }
+            ResultSet rs = statement.executeQuery("SELECT id FROM userdata WHERE " + "login=" + "'" + login + "' AND " + "pass="  + pass);
+            while (rs.next()) {
+                id = rs.getInt("id");
+            }
             return id;
         } catch (SQLException e) {
         }
@@ -72,7 +68,6 @@ public class DBAccess implements Closeable {
         }
         return id;
     }
-<<<<<<< HEAD
     public Object[] getUserData(String login, int pass) {
         Object[] data = new Object[]{0, 0, 0, "null", "null","null", "null", "null"};
         try {
@@ -83,26 +78,12 @@ public class DBAccess implements Closeable {
             }
             if ((int)data[0] == 0) {
                 data = new Object[]{0, 0, 0, "null", "null","null", "null", "null"};
-=======
-    public Object[] getPregnantData(String login, int pass) {
-        //дописать проверку на null
-        Object[] data = new Object[]{0, 0, 0, "null", "null","null", "null"};
-        try {
-            ResultSet rs = statement.executeQuery("SELECT id,name,lastname, login, pass, email, userkey FROM userdata WHERE login =" + "'" + login + "'" +" AND " + "pass="  + pass  );
-            while(rs.next()) {
-                data = new Object[]{rs.getInt("id"),rs.getInt("pass"), rs.getInt("userkey"), rs.getString("name"), rs.getString("lastname"),
-                        rs.getString("login"), rs.getString("email")};
-            }
-            if ((int)data[0] == 0) {
-                data = new Object[]{0, 0, 0, "null", "null","null", "null"};
->>>>>>> 3815a0a9139e7fdb126b4a5725dfad6f9ed0664e
             }
             return data;
         } catch (SQLException throwable) {
             return data;
         }
     }
-<<<<<<< HEAD
     public String[] getHelpData() {
         ResultSet rs;
         String[] helpData = new String[8];
@@ -151,7 +132,7 @@ public class DBAccess implements Closeable {
     public boolean getHelpAccepted(String login) {
         int accepted = 0;
         try {
-          ResultSet rs = statement.executeQuery("SELECT helpaccepted FROM userdata WHERE login=" + "'" + login + "'");
+            ResultSet rs = statement.executeQuery("SELECT helpaccepted FROM userdata WHERE login=" + "'" + login + "'");
             while (rs.next()) {
                 accepted = rs.getInt("helpaccepted");
             }
@@ -174,8 +155,6 @@ public class DBAccess implements Closeable {
             throwables.printStackTrace();
         }
     }
-=======
->>>>>>> 3815a0a9139e7fdb126b4a5725dfad6f9ed0664e
 
     public boolean checkKey(int key) {
         int checkKey = 0;
@@ -228,19 +207,15 @@ public class DBAccess implements Closeable {
             while (rs.next()) {
                 number = rs.getInt("number");
             }
-        if (number == num) {
-            return true;
-        }
-        else {
-            return false;
-        }
+            if (number == num) {
+                return true;
+            }
+            else {
+                return false;
+            }
         } catch (SQLException throwable) {
             throwable.printStackTrace();
         }
-<<<<<<< HEAD
-=======
-
->>>>>>> 3815a0a9139e7fdb126b4a5725dfad6f9ed0664e
         return true;
     }
     public boolean checkLoginExists(Object[] userData) {
@@ -316,27 +291,17 @@ public class DBAccess implements Closeable {
             e.printStackTrace();
         }
     }
-<<<<<<< HEAD
     public void setUserData(Object[] userData, int key) {
-=======
-    public void setPregnantData(Object[] userData, int key) {
->>>>>>> 3815a0a9139e7fdb126b4a5725dfad6f9ed0664e
         //num pass name lastname login email
         int pass = (int)userData[1];
         String name = (String)userData[2];
         String lastName = (String) userData[3];
         String login = (String)userData[4];
         String email = (String)userData[5];
-<<<<<<< HEAD
         String type = (String)userData[6];
         try {
             statement.execute("INSERT INTO userdata (name,lastname ,login, pass,email, userkey, type) VALUES (" + "'" + name+ "'" + "," + "'" + lastName+ "'" + "," + "'" + login+ "'" + "," + pass + ","
                     + "'" + email+ "'" + ","+ key + "," + "'" + type + "'" + ");");
-=======
-        try {
-            statement.execute("INSERT INTO userdata (name,lastname ,login, pass,email, userkey) VALUES (" + "'" + name+ "'" + "," + "'" + lastName+ "'" + "," + "'" + login+ "'" + "," + pass + ","
-                    + "'" + email+ "'" + ","+ key + ");");
->>>>>>> 3815a0a9139e7fdb126b4a5725dfad6f9ed0664e
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -349,12 +314,11 @@ public class DBAccess implements Closeable {
         String email = (String)userData[5];
         try {
             statement.executeUpdate("UPDATE userdata SET name=" + "'" + name + "'" + "," +" lastname=" + "'" + lastName + "'" + "," + " login="  + "'" + login + "'"
-                            + "," + " pass=" + pass + "," +  " email=" + "'" + email+ "'" + "," +  " userkey=" + key + " WHERE login=" + "'" + login + "'");
+                    + "," + " pass=" + pass + "," +  " email=" + "'" + email+ "'" + "," +  " userkey=" + key + " WHERE login=" + "'" + login + "'");
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
-<<<<<<< HEAD
     public void insertHelpData(String[] helpData) {//login,name, lastname, station in, station out, время, comment
         try {
             statement.execute("INSERT INTO help (login,name,lastname,stin,stout,time,comment) VALUES ("
@@ -365,15 +329,13 @@ public class DBAccess implements Closeable {
             throwable.printStackTrace();
         }
     }
-=======
->>>>>>> 3815a0a9139e7fdb126b4a5725dfad6f9ed0664e
 
     public int passRecover(String login, String email) {
         int pass = 0;
         try {
             ResultSet rs = statement.executeQuery("SELECT pass FROM userdata WHERE login="  + "'" + login + "'" +" AND " + "email= " + "'" + email + "'");
             while (rs.next()) {
-                 pass = rs.getInt("pass");
+                pass = rs.getInt("pass");
             }
             return pass;
         } catch (SQLException throwable) {
@@ -392,7 +354,6 @@ public class DBAccess implements Closeable {
             return pass;
         }
     }
-<<<<<<< HEAD
     public void setHelpAccepted(String login) {
         try {
             statement.executeUpdate("UPDATE userdata SET helpaccepted= " + 1 +
@@ -401,8 +362,6 @@ public class DBAccess implements Closeable {
             throwables.printStackTrace();
         }
     }
-=======
->>>>>>> 3815a0a9139e7fdb126b4a5725dfad6f9ed0664e
 
     public void verify(int Id){
         try {
@@ -411,9 +370,8 @@ public class DBAccess implements Closeable {
         }
     }
 
-<<<<<<< HEAD
     public void clearHelpData(String queryString) {
-       int query = Integer.parseInt(queryString);
+        int query = Integer.parseInt(queryString);
         try {
             ResultSet rs = statement.executeQuery("DELETE FROM help * WHERE query=" + query);
         } catch (SQLException throwable) {
@@ -421,8 +379,6 @@ public class DBAccess implements Closeable {
         }
     }
 
-=======
->>>>>>> 3815a0a9139e7fdb126b4a5725dfad6f9ed0664e
     @Override
     public void close() throws IOException {
         try {
